@@ -3,15 +3,15 @@ Benchmark for Java Memcached clients comparison
 
 ## Test Environment
 - Software
--- Linux Mint 17.3 64 bit
--- java version "1.8.0_72"
--- Memcached 1.4.14
--- Clients
---- Spymemcached 2.12.0
---- Folsom 0.7.1
---- Xmemcached 2.0.0
+    - Linux Mint 17.3 64 bit
+    - java version "1.8.0_72"
+    - Memcached 1.4.14
+    - Clients
+        - Spymemcached 2.12.0
+        - Folsom 0.7.1
+        - Xmemcached 2.0.0
 - Hardware
--- CPU: Intel(R) Core(TM) i7-4910MQ CPU @ 2.90GHz
+    - CPU: Intel(R) Core(TM) i7-4910MQ CPU @ 2.90GHz
 
 
 ## Test Scenario
