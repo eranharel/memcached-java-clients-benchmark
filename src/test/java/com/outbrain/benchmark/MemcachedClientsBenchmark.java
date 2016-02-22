@@ -12,7 +12,9 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.internal.GetFuture;
 import net.spy.memcached.internal.OperationFuture;
 import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
@@ -32,6 +34,7 @@ import java.util.concurrent.Executors;
  */
 @Fork(1)
 @Threads(32)
+@BenchmarkMode({Mode.Throughput, Mode.SampleTime})
 public class MemcachedClientsBenchmark {
 
   private static final int NUM_OPERATIONS = 4;
