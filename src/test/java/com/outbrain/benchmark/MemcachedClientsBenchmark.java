@@ -6,6 +6,8 @@ import com.google.common.net.HostAndPort;
 import com.spotify.folsom.BinaryMemcacheClient;
 import com.spotify.folsom.ConnectFuture;
 import com.spotify.folsom.MemcacheClientBuilder;
+import net.rubyeye.xmemcached.XMemcachedClientBuilder;
+import net.rubyeye.xmemcached.command.BinaryCommandFactory;
 import net.spy.memcached.BinaryConnectionFactory;
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.MemcachedClientIF;
@@ -75,45 +77,65 @@ public class MemcachedClientsBenchmark {
     }
   }
 
+  @State(Scope.Benchmark)
+  public static class X {
+    private net.rubyeye.xmemcached.MemcachedClient client;
+
+    @Setup
+    public void setup() throws IOException {
+      final XMemcachedClientBuilder builder = new XMemcachedClientBuilder(Lists.newArrayList(new InetSocketAddress("localhost", 11211)));
+      builder.setCommandFactory(new BinaryCommandFactory());
+      client = builder.build();
+    }
+
+    @TearDown
+    public void teardown() throws IOException {
+      client.shutdown();
+    }
+  }
+
   @Benchmark
-  public Object measureSpyAsync(final Spy spy) throws ExecutionException, InterruptedException {
-    final CountDownLatch countDownLatch = new CountDownLatch(NUM_OPERATIONS * 2);
-    for (int i = 0; i < NUM_OPERATIONS; i++) {
-      ((OperationFuture<Boolean>) spy.client.set("key" + i, 100000, PAYLOAD + i))
+  public Object measureSpyAsync(final Spy spy) throws Exception {
+    return measureGetSetAsync((countDownLatch, k, v) -> {
+      ((OperationFuture<Boolean>) spy.client.set(k, 100000, v))
         .addListener(future -> countDownLatch.countDown());
 
-      ((GetFuture<Object>) spy.client.asyncGet("key" + i))
+      ((GetFuture<Object>) spy.client.asyncGet(k))
         .addListener(future -> countDownLatch.countDown());
+    });
+  }
+
+  @Benchmark
+  public Object measureFolsomAsync(final Folsom folsom) throws Exception {
+    return measureGetSetAsync((countDownLatch, k, v) -> {
+      folsom.client.set(k, v, 10000).addListener(countDownLatch::countDown, folsom.executor);
+
+      folsom.client.get(k).addListener(countDownLatch::countDown, folsom.executor);
+    });
+  }
+
+  @Benchmark
+  public Object measureX(final X x) throws Exception {
+    return measureGetSetAsync((countDownLatch, k, v) -> {
+      x.client.set(k, 100000, v);
+      countDownLatch.countDown();
+      x.client.get(k);
+      countDownLatch.countDown();
+    });
+  }
+
+  private Object measureGetSetAsync(SingleIteration singleIteration) throws Exception {
+    final CountDownLatch countDownLatch = new CountDownLatch(NUM_OPERATIONS * 2);
+    for (int i = 0; i < NUM_OPERATIONS; i++) {
+      singleIteration.run(countDownLatch, "key" + i, PAYLOAD + i);
     }
 
     countDownLatch.await();
     return countDownLatch;
   }
 
-  @Benchmark
-  public Object measureFolsomAsync(final Folsom folsom) throws ExecutionException, InterruptedException {
-    final CountDownLatch countDownLatch = new CountDownLatch(NUM_OPERATIONS * 2);
-    for (int i = 0; i < NUM_OPERATIONS; i++) {
-      folsom.client.set("key" + i, PAYLOAD + i, 10000).addListener(countDownLatch::countDown, folsom.executor);
-
-      folsom.client.get("key" + i).addListener(countDownLatch::countDown, folsom.executor);
-    }
-
-    countDownLatch.await();
-    return countDownLatch;
-  }
-
-
-  //  @Benchmark
-  public Object measureSpySync(final Spy spy) throws ExecutionException, InterruptedException {
-    spy.client.set("key", 100000, "value").get();
-    return spy.client.get("key");
-  }
-
-  //  @Benchmark
-  public Object measureFolsomSync(final Folsom folsom) throws ExecutionException, InterruptedException {
-    folsom.client.set("key", "value", 100000).get();
-    return folsom.client.get("key").get();
+  private interface SingleIteration {
+    void run(final CountDownLatch countDownLatch, final String key, final String value) throws Exception;
   }
 
 //  public static void main(String[] args) throws RunnerException {
