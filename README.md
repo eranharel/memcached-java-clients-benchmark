@@ -20,7 +20,12 @@ The benchmark create the clients once.
 - Memcacahed instance runs on localhost port 11211
 - X threads use the clients to execute set followed by a get in async mode where possible.
 - When Y iterations are complete (and the commands returned) a test iteration completes
+- Clients all use the binary protocol, and default transcoders
 
+## TODO
+- Test on remote memcached
+- Test cluster
+- Test with various thread counts
 
 ## Test Result
 ### 32 threads
