@@ -41,9 +41,10 @@ public class MemcachedClientsBenchmark {
 
   private static final int NUM_OPERATIONS = 4;
   private static final String PAYLOAD = Strings.repeat("X", 1024);
+  public static final int EXPIRATION = 100000;
 
   @State(Scope.Benchmark)
-  public static class Spy {
+  public static class Spy implements Client {
     private MemcachedClientIF client;
 
     @Setup
@@ -55,10 +56,22 @@ public class MemcachedClientsBenchmark {
     public void teardown() {
       client.shutdown();
     }
+
+    @Override
+    public void get(String key, CountDownLatch countDownLatch) throws Exception {
+      ((GetFuture<Object>) client.asyncGet(key))
+        .addListener(future -> countDownLatch.countDown());
+    }
+
+    @Override
+    public void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception {
+      ((OperationFuture<Boolean>) client.set(key, EXPIRATION, value))
+        .addListener(future -> countDownLatch.countDown());
+    }
   }
 
   @State(Scope.Benchmark)
-  public static class Folsom {
+  public static class Folsom implements Client {
     private BinaryMemcacheClient<Serializable> client;
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
@@ -75,10 +88,20 @@ public class MemcachedClientsBenchmark {
       client.shutdown();
       executor.shutdown();
     }
+
+    @Override
+    public void get(String key, CountDownLatch countDownLatch) throws Exception {
+      client.get(key).addListener(countDownLatch::countDown, executor);
+    }
+
+    @Override
+    public void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception {
+      client.set(key, value, EXPIRATION).addListener(countDownLatch::countDown, executor);
+    }
   }
 
   @State(Scope.Benchmark)
-  public static class X {
+  public static class X implements Client {
     private net.rubyeye.xmemcached.MemcachedClient client;
 
     @Setup
@@ -92,50 +115,50 @@ public class MemcachedClientsBenchmark {
     public void teardown() throws IOException {
       client.shutdown();
     }
+
+    @Override
+    public void get(String key, CountDownLatch countDownLatch) throws Exception {
+      countDownLatch.countDown();
+      client.get(key);
+    }
+
+    @Override
+    public void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception {
+      countDownLatch.countDown();
+      client.set(key, expiration, value);
+    }
   }
 
   @Benchmark
   public Object measureSpyAsync(final Spy spy) throws Exception {
-    return measureGetSetAsync((countDownLatch, k, v) -> {
-      ((OperationFuture<Boolean>) spy.client.set(k, 100000, v))
-        .addListener(future -> countDownLatch.countDown());
-
-      ((GetFuture<Object>) spy.client.asyncGet(k))
-        .addListener(future -> countDownLatch.countDown());
-    });
+    return measureGetSetAsync(spy);
   }
 
   @Benchmark
   public Object measureFolsomAsync(final Folsom folsom) throws Exception {
-    return measureGetSetAsync((countDownLatch, k, v) -> {
-      folsom.client.set(k, v, 10000).addListener(countDownLatch::countDown, folsom.executor);
-
-      folsom.client.get(k).addListener(countDownLatch::countDown, folsom.executor);
-    });
+    return measureGetSetAsync(folsom);
   }
 
   @Benchmark
   public Object measureX(final X x) throws Exception {
-    return measureGetSetAsync((countDownLatch, k, v) -> {
-      x.client.set(k, 100000, v);
-      countDownLatch.countDown();
-      x.client.get(k);
-      countDownLatch.countDown();
-    });
+    return measureGetSetAsync(x);
   }
 
-  private Object measureGetSetAsync(SingleIteration singleIteration) throws Exception {
+  private Object measureGetSetAsync(final Client client) throws Exception {
     final CountDownLatch countDownLatch = new CountDownLatch(NUM_OPERATIONS * 2);
+
     for (int i = 0; i < NUM_OPERATIONS; i++) {
-      singleIteration.run(countDownLatch, "key" + i, PAYLOAD + i);
+      client.set("key" + i, PAYLOAD + i, EXPIRATION, countDownLatch);
+      client.get("key" + i, countDownLatch);
     }
 
     countDownLatch.await();
     return countDownLatch;
   }
 
-  private interface SingleIteration {
-    void run(final CountDownLatch countDownLatch, final String key, final String value) throws Exception;
+  public interface Client {
+    void get(String key, CountDownLatch countDownLatch) throws Exception;
+    void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception;
   }
 
 //  public static void main(String[] args) throws RunnerException {
