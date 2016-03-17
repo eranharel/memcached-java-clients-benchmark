@@ -34,11 +34,15 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Eran Harel
@@ -50,14 +54,18 @@ public class MemcachedClientsBenchmark {
 
   private static final int NUM_OPERATIONS = 4;
   private static final String PAYLOAD = Strings.repeat("X", 1024);
-  public static final int EXPIRATION = (int) TimeUnit.HOURS.toSeconds(2);
+  private static final int EXPIRATION = (int) TimeUnit.HOURS.toSeconds(2);
+
+  private static final int MULTI_GET_KEY_COUNT = 50;
+  private static final List<String> keys = IntStream.range(0, MULTI_GET_KEY_COUNT * 100).boxed().map(i -> "key" + i).collect(Collectors.toCollection(ArrayList::new));
 
   public static abstract class AbstractSpy implements Client {
     private MemcachedClientIF client;
 
     @Setup
-    public void setup() throws IOException {
+    public void setup() throws Exception {
       client = new MemcachedClient(createConnectionFactory(), Lists.newArrayList(new InetSocketAddress("localhost", 11211)));
+      setupValues(this);
     }
 
     protected abstract DefaultConnectionFactory createConnectionFactory();
@@ -75,8 +83,18 @@ public class MemcachedClientsBenchmark {
 
     @Override
     public void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception {
-      ((OperationFuture<Boolean>) client.set(key, EXPIRATION, value))
+      ((OperationFuture<Boolean>) client.set(key, expiration, value))
         .addListener(future -> countDownLatch.countDown());
+    }
+
+    @Override
+    public void set(String key, String value, int expiration) throws Exception {
+      client.set(key, expiration, value);
+    }
+
+    @Override
+    public Object multiGet(List<String> keys) throws Exception {
+      return client.asyncGetBulk(keys).get();
     }
   }
 
@@ -99,11 +117,12 @@ public class MemcachedClientsBenchmark {
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     @Setup
-    public void setup() throws ExecutionException, InterruptedException {
+    public void setup() throws Exception {
       final MemcacheClientBuilder<Serializable> clientBuilder = MemcacheClientBuilder.newSerializableObjectClient().
         withAddress(HostAndPort.fromParts("localhost", 11211));
       client =  createClient(clientBuilder);
       ConnectFuture.connectFuture(client).get();
+      setupValues(this);
     }
 
     protected abstract MemcacheClient<Serializable> createClient(MemcacheClientBuilder<Serializable> clientBuilder);
@@ -121,7 +140,17 @@ public class MemcachedClientsBenchmark {
 
     @Override
     public void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception {
-      client.set(key, value, EXPIRATION).addListener(countDownLatch::countDown, executor);
+      client.set(key, value, expiration).addListener(countDownLatch::countDown, executor);
+    }
+
+    @Override
+    public void set(String key, String value, int expiration) throws Exception {
+      client.set(key, value, expiration);
+    }
+
+    @Override
+    public Object multiGet(List<String> keys) throws Exception {
+      return client.get(keys).get();
     }
   }
 
@@ -145,10 +174,11 @@ public class MemcachedClientsBenchmark {
     private net.rubyeye.xmemcached.MemcachedClient client;
 
     @Setup
-    public void setup() throws IOException {
+    public void setup() throws Exception {
       final XMemcachedClientBuilder builder = new XMemcachedClientBuilder(Lists.newArrayList(new InetSocketAddress("localhost", 11211)));
       builder.setCommandFactory(createCommandFactory());
       client = builder.build();
+      setupValues(this);
     }
 
     protected abstract CommandFactory createCommandFactory();
@@ -169,6 +199,16 @@ public class MemcachedClientsBenchmark {
       countDownLatch.countDown();
       client.set(key, expiration, value);
     }
+
+    @Override
+    public void set(String key, String value, int expiration) throws Exception {
+      client.set(key, expiration, value);
+    }
+
+    @Override
+    public Object multiGet(List<String> keys) throws Exception {
+      return client.get(keys);
+    }
   }
 
   @State(Scope.Benchmark)
@@ -188,7 +228,7 @@ public class MemcachedClientsBenchmark {
   }
 
 
-    @Benchmark
+  @Benchmark
   public Object measureAsciiSpyAsync(final AsciiSpy spy) throws Exception {
     return measureGetSetAsync(spy);
   }
@@ -197,6 +237,17 @@ public class MemcachedClientsBenchmark {
   public Object measureBinarySpyAsync(final BinarySpy spy) throws Exception {
     return measureGetSetAsync(spy);
   }
+
+  @Benchmark
+  public Object measureAsciiSpyMultiget(final AsciiSpy spy) throws Exception {
+    return measureMultiGet(spy);
+  }
+
+  @Benchmark
+  public Object measureBinarySpyMultiget(final BinarySpy spy) throws Exception {
+    return measureMultiGet(spy);
+  }
+
 
   @Benchmark
   public Object measureAsciiFolsomAsync(final AsciiFolsom folsom) throws Exception {
@@ -209,6 +260,17 @@ public class MemcachedClientsBenchmark {
   }
 
   @Benchmark
+  public Object measureAsciiFolsomMultiget(final AsciiFolsom folsom) throws Exception {
+    return measureMultiGet(folsom);
+  }
+
+  @Benchmark
+  public Object measureBinaryFolsomMultiget(final BinaryFolsom folsom) throws Exception {
+    return measureMultiGet(folsom);
+  }
+
+
+  @Benchmark
   public Object measureAsciiX(final AsciiX x) throws Exception {
     return measureGetSetAsync(x);
   }
@@ -218,12 +280,22 @@ public class MemcachedClientsBenchmark {
     return measureGetSetAsync(x);
   }
 
+  @Benchmark
+  public Object measureAsciiXMultiget(final AsciiX x) throws Exception {
+    return measureMultiGet(x);
+  }
+
+  @Benchmark
+  public Object measureBinaryXMultiget(final BinaryX x) throws Exception {
+    return measureMultiGet(x);
+  }
+
   private Object measureGetSetAsync(final Client client) throws Exception {
     final CountDownLatch countDownLatch = new CountDownLatch(NUM_OPERATIONS * 2);
 
     for (int i = 0; i < NUM_OPERATIONS; i++) {
-      final String key = "key" + i;
-      client.set(key, PAYLOAD + i, EXPIRATION, countDownLatch);
+      final String key = keys.get(i);
+      client.set(key, key + "value", EXPIRATION, countDownLatch);
       client.get(key, countDownLatch);
     }
 
@@ -231,9 +303,23 @@ public class MemcachedClientsBenchmark {
     return countDownLatch;
   }
 
+  private Object measureMultiGet(final Client client) throws Exception {
+    final ArrayList<String> shuffledList = new ArrayList<>(keys);
+    Collections.shuffle(shuffledList);
+    return client.multiGet(shuffledList.subList(0, MULTI_GET_KEY_COUNT));
+  }
+
+  private static void setupValues(final Client client) throws Exception {
+    for (final String key : keys) {
+      client.set(key, key + "value", EXPIRATION);
+    }
+  }
+
   public interface Client {
     void get(String key, CountDownLatch countDownLatch) throws Exception;
+    Object multiGet(List<String> keys) throws Exception;
     void set(String key, String value, int expiration, CountDownLatch countDownLatch) throws Exception;
+    void set(String key, String value, int expiration) throws Exception;
   }
 
   public static void main(String[] args) throws RunnerException {
