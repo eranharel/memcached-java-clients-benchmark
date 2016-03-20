@@ -119,7 +119,8 @@ public class MemcachedClientsBenchmark {
     @Setup
     public void setup() throws Exception {
       final MemcacheClientBuilder<Serializable> clientBuilder = MemcacheClientBuilder.newSerializableObjectClient().
-        withAddress(HostAndPort.fromParts("localhost", 11211));
+        withAddress(HostAndPort.fromParts("localhost", 11211))
+        .withMaxOutstandingRequests(10000);
       client =  createClient(clientBuilder);
       ConnectFuture.connectFuture(client).get();
       setupValues(this);
