@@ -446,5 +446,407 @@ MemcachedClientsBenchmark.measureBinaryXMultiget       sample   43732      0.015
 ```
 ### 128 threads
 ```
+Result "measureAsciiFolsomAsync":
+  N = 707954
+  mean =      0.004 ±(99.9%) 0.001 s/op
 
+  Histogram, s/op:
+    [0.000, 0.003) = 127540
+    [0.003, 0.005) = 498729
+    [0.005, 0.008) = 43964
+    [0.008, 0.010) = 20708
+    [0.010, 0.013) = 9333
+    [0.013, 0.015) = 4456
+    [0.015, 0.018) = 1065
+    [0.018, 0.020) = 469
+    [0.020, 0.023) = 453
+    [0.023, 0.025) = 582
+    [0.025, 0.028) = 314
+    [0.028, 0.030) = 129
+    [0.030, 0.033) = 197
+    [0.033, 0.035) = 9
+    [0.035, 0.038) = 6
+
+  Percentiles, s/op:
+      p(0.0000) =     ≈ 10⁻⁴ s/op
+     p(50.0000) =      0.003 s/op
+     p(90.0000) =      0.005 s/op
+     p(95.0000) =      0.008 s/op
+     p(99.0000) =      0.013 s/op
+     p(99.9000) =      0.025 s/op
+     p(99.9900) =      0.032 s/op
+     p(99.9990) =      0.034 s/op
+     p(99.9999) =      0.037 s/op
+    p(100.0000) =      0.037 s/op
+
+Result "measureAsciiFolsomMultiget":
+  N = 37819
+  mean =      0.068 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.025) = 478
+    [0.025, 0.050) = 5121
+    [0.050, 0.075) = 22027
+    [0.075, 0.100) = 7310
+    [0.100, 0.125) = 2099
+    [0.125, 0.150) = 508
+    [0.150, 0.175) = 118
+    [0.175, 0.200) = 26
+    [0.200, 0.225) = 14
+    [0.225, 0.250) = 56
+    [0.250, 0.275) = 34
+    [0.275, 0.300) = 12
+    [0.300, 0.325) = 5
+    [0.325, 0.350) = 5
+    [0.350, 0.375) = 5
+
+  Percentiles, s/op:
+      p(0.0000) =      0.002 s/op
+     p(50.0000) =      0.064 s/op
+     p(90.0000) =      0.095 s/op
+     p(95.0000) =      0.108 s/op
+     p(99.0000) =      0.141 s/op
+     p(99.9000) =      0.267 s/op
+     p(99.9900) =      0.355 s/op
+     p(99.9990) =      0.384 s/op
+     p(99.9999) =      0.384 s/op
+    p(100.0000) =      0.384 s/op
+
+Result "measureAsciiSpyAsync":
+  N = 882133
+  mean =      0.003 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.025) = 881615
+    [0.025, 0.050) = 256
+    [0.050, 0.075) = 134
+    [0.075, 0.100) = 0
+    [0.100, 0.125) = 0
+    [0.125, 0.150) = 0
+    [0.150, 0.175) = 0
+    [0.175, 0.200) = 0
+    [0.200, 0.225) = 0
+    [0.225, 0.250) = 127
+    [0.250, 0.275) = 0
+    [0.275, 0.300) = 0
+    [0.300, 0.325) = 1
+    [0.325, 0.350) = 0
+    [0.350, 0.375) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.001 s/op
+     p(50.0000) =      0.003 s/op
+     p(90.0000) =      0.003 s/op
+     p(95.0000) =      0.004 s/op
+     p(99.0000) =      0.005 s/op
+     p(99.9000) =      0.011 s/op
+     p(99.9900) =      0.234 s/op
+     p(99.9990) =      0.236 s/op
+     p(99.9999) =      0.311 s/op
+    p(100.0000) =      0.311 s/op
+
+Result "measureAsciiSpyMultiget":
+  N = 40996
+  mean =      0.063 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.013) = 0
+    [0.013, 0.025) = 37
+    [0.025, 0.038) = 921
+    [0.038, 0.050) = 1612
+    [0.050, 0.063) = 18629
+    [0.063, 0.075) = 16584
+    [0.075, 0.088) = 2284
+    [0.088, 0.100) = 610
+    [0.100, 0.113) = 210
+    [0.113, 0.125) = 74
+    [0.125, 0.138) = 25
+    [0.138, 0.150) = 8
+    [0.150, 0.163) = 1
+    [0.163, 0.175) = 1
+    [0.175, 0.188) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.022 s/op
+     p(50.0000) =      0.062 s/op
+     p(90.0000) =      0.073 s/op
+     p(95.0000) =      0.079 s/op
+     p(99.0000) =      0.097 s/op
+     p(99.9000) =      0.124 s/op
+     p(99.9900) =      0.144 s/op
+     p(99.9990) =      0.165 s/op
+     p(99.9999) =      0.165 s/op
+    p(100.0000) =      0.165 s/op
+
+Result "measureAsciiX":
+  N = 953473
+  mean =      0.003 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.013) = 952300
+    [0.013, 0.025) = 1045
+    [0.025, 0.038) = 0
+    [0.038, 0.050) = 0
+    [0.050, 0.063) = 0
+    [0.063, 0.075) = 0
+    [0.075, 0.088) = 0
+    [0.088, 0.100) = 0
+    [0.100, 0.113) = 0
+    [0.113, 0.125) = 0
+    [0.125, 0.138) = 0
+    [0.138, 0.150) = 0
+    [0.150, 0.163) = 128
+    [0.163, 0.175) = 0
+    [0.175, 0.188) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.001 s/op
+     p(50.0000) =      0.002 s/op
+     p(90.0000) =      0.003 s/op
+     p(95.0000) =      0.004 s/op
+     p(99.0000) =      0.006 s/op
+     p(99.9000) =      0.013 s/op
+     p(99.9900) =      0.151 s/op
+     p(99.9990) =      0.154 s/op
+     p(99.9999) =      0.155 s/op
+    p(100.0000) =      0.155 s/op
+
+Result "measureAsciiXMultiget":
+  N = 39925
+  mean =      0.064 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.125) = 39052
+    [0.125, 0.250) = 857
+    [0.250, 0.375) = 15
+    [0.375, 0.500) = 0
+    [0.500, 0.625) = 0
+    [0.625, 0.750) = 0
+    [0.750, 0.875) = 0
+    [0.875, 1.000) = 0
+    [1.000, 1.125) = 0
+    [1.125, 1.250) = 1
+    [1.250, 1.375) = 0
+    [1.375, 1.500) = 0
+    [1.500, 1.625) = 0
+    [1.625, 1.750) = 0
+    [1.750, 1.875) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.003 s/op
+     p(50.0000) =      0.062 s/op
+     p(90.0000) =      0.075 s/op
+     p(95.0000) =      0.087 s/op
+     p(99.0000) =      0.151 s/op
+     p(99.9000) =      0.230 s/op
+     p(99.9900) =      0.269 s/op
+     p(99.9990) =      1.242 s/op
+     p(99.9999) =      1.242 s/op
+    p(100.0000) =      1.242 s/op
+
+Result "measureBinaryFolsomAsync":
+  N = 595471
+  mean =      0.004 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.005) = 451341
+    [0.005, 0.010) = 119016
+    [0.010, 0.015) = 19656
+    [0.015, 0.020) = 3728
+    [0.020, 0.025) = 1356
+    [0.025, 0.030) = 153
+    [0.030, 0.035) = 1
+    [0.035, 0.040) = 185
+    [0.040, 0.045) = 35
+
+  Percentiles, s/op:
+      p(0.0000) =     ≈ 10⁻⁴ s/op
+     p(50.0000) =      0.004 s/op
+     p(90.0000) =      0.007 s/op
+     p(95.0000) =      0.009 s/op
+     p(99.0000) =      0.015 s/op
+     p(99.9000) =      0.024 s/op
+     p(99.9900) =      0.039 s/op
+     p(99.9990) =      0.041 s/op
+     p(99.9999) =      0.041 s/op
+    p(100.0000) =      0.041 s/op
+
+Result "measureBinaryFolsomMultiget":
+  N = 41096
+  mean =      0.062 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.025) = 3486
+    [0.025, 0.050) = 7740
+    [0.050, 0.075) = 19746
+    [0.075, 0.100) = 7088
+    [0.100, 0.125) = 2250
+    [0.125, 0.150) = 614
+    [0.150, 0.175) = 130
+    [0.175, 0.200) = 29
+    [0.200, 0.225) = 6
+    [0.225, 0.250) = 4
+    [0.250, 0.275) = 3
+    [0.275, 0.300) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.004 s/op
+     p(50.0000) =      0.062 s/op
+     p(90.0000) =      0.094 s/op
+     p(95.0000) =      0.108 s/op
+     p(99.0000) =      0.136 s/op
+     p(99.9000) =      0.178 s/op
+     p(99.9900) =      0.247 s/op
+     p(99.9990) =      0.269 s/op
+     p(99.9999) =      0.269 s/op
+    p(100.0000) =      0.269 s/op
+
+Result "measureBinarySpyAsync":
+  N = 623201
+  mean =      0.004 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.050) = 622017
+    [0.050, 0.100) = 583
+    [0.100, 0.150) = 77
+    [0.150, 0.200) = 12
+    [0.200, 0.250) = 0
+    [0.250, 0.300) = 128
+    [0.300, 0.350) = 0
+    [0.350, 0.400) = 127
+    [0.400, 0.450) = 257
+
+  Percentiles, s/op:
+      p(0.0000) =      0.001 s/op
+     p(50.0000) =      0.003 s/op
+     p(90.0000) =      0.005 s/op
+     p(95.0000) =      0.006 s/op
+     p(99.0000) =      0.010 s/op
+     p(99.9000) =      0.092 s/op
+     p(99.9900) =      0.436 s/op
+     p(99.9990) =      0.437 s/op
+     p(99.9999) =      0.441 s/op
+    p(100.0000) =      0.441 s/op
+
+Result "measureBinarySpyMultiget":
+  N = 60941
+  mean =      0.042 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.013) = 0
+    [0.013, 0.025) = 26138
+    [0.025, 0.038) = 4880
+    [0.038, 0.050) = 3780
+    [0.050, 0.063) = 13009
+    [0.063, 0.075) = 11368
+    [0.075, 0.088) = 1299
+    [0.088, 0.100) = 311
+    [0.100, 0.113) = 107
+    [0.113, 0.125) = 40
+    [0.125, 0.138) = 8
+    [0.138, 0.150) = 1
+    [0.150, 0.163) = 0
+    [0.163, 0.175) = 0
+    [0.175, 0.188) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.015 s/op
+     p(50.0000) =      0.036 s/op
+     p(90.0000) =      0.067 s/op
+     p(95.0000) =      0.071 s/op
+     p(99.0000) =      0.085 s/op
+     p(99.9000) =      0.110 s/op
+     p(99.9900) =      0.129 s/op
+     p(99.9990) =      0.147 s/op
+     p(99.9999) =      0.147 s/op
+    p(100.0000) =      0.147 s/op
+
+Result "measureBinaryX":
+  N = 876283
+  mean =      0.003 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.025) = 875220
+    [0.025, 0.050) = 483
+    [0.050, 0.075) = 303
+    [0.075, 0.100) = 132
+    [0.100, 0.125) = 0
+    [0.125, 0.150) = 0
+    [0.150, 0.175) = 0
+    [0.175, 0.200) = 0
+    [0.200, 0.225) = 0
+    [0.225, 0.250) = 0
+    [0.250, 0.275) = 4
+    [0.275, 0.300) = 1
+    [0.300, 0.325) = 2
+    [0.325, 0.350) = 2
+    [0.350, 0.375) = 7
+
+  Percentiles, s/op:
+      p(0.0000) =      0.001 s/op
+     p(50.0000) =      0.003 s/op
+     p(90.0000) =      0.004 s/op
+     p(95.0000) =      0.004 s/op
+     p(99.0000) =      0.006 s/op
+     p(99.9000) =      0.032 s/op
+     p(99.9900) =      0.389 s/op
+     p(99.9990) =      0.390 s/op
+     p(99.9999) =      0.396 s/op
+    p(100.0000) =      0.396 s/op
+
+Result "measureBinaryXMultiget":
+  N = 38665
+  mean =      0.066 ±(99.9%) 0.001 s/op
+
+  Histogram, s/op:
+    [0.000, 0.025) = 0
+    [0.025, 0.050) = 1647
+    [0.050, 0.075) = 31801
+    [0.075, 0.100) = 4528
+    [0.100, 0.125) = 550
+    [0.125, 0.150) = 102
+    [0.150, 0.175) = 20
+    [0.175, 0.200) = 9
+    [0.200, 0.225) = 7
+    [0.225, 0.250) = 1
+    [0.250, 0.275) = 0
+    [0.275, 0.300) = 0
+
+  Percentiles, s/op:
+      p(0.0000) =      0.031 s/op
+     p(50.0000) =      0.065 s/op
+     p(90.0000) =      0.078 s/op
+     p(95.0000) =      0.086 s/op
+     p(99.0000) =      0.109 s/op
+     p(99.9000) =      0.150 s/op
+     p(99.9900) =      0.209 s/op
+     p(99.9990) =      0.228 s/op
+     p(99.9999) =      0.228 s/op
+    p(100.0000) =      0.228 s/op
+
+Benchmark                                                Mode     Cnt      Score      Error  Units
+MemcachedClientsBenchmark.measureAsciiFolsomAsync       thrpt      20  35641.538 ± 1916.815  ops/s
+MemcachedClientsBenchmark.measureAsciiFolsomMultiget    thrpt      20   1783.554 ±   44.849  ops/s
+MemcachedClientsBenchmark.measureAsciiSpyAsync          thrpt      20  42671.321 ± 2200.229  ops/s
+MemcachedClientsBenchmark.measureAsciiSpyMultiget       thrpt      20   2118.122 ±   72.195  ops/s
+MemcachedClientsBenchmark.measureAsciiX                 thrpt      20  49585.853 ± 3439.071  ops/s
+MemcachedClientsBenchmark.measureAsciiXMultiget         thrpt      20   2023.401 ±   61.771  ops/s
+MemcachedClientsBenchmark.measureBinaryFolsomAsync      thrpt      20  28260.170 ± 3610.021  ops/s
+MemcachedClientsBenchmark.measureBinaryFolsomMultiget   thrpt      20   2067.906 ±  215.423  ops/s
+MemcachedClientsBenchmark.measureBinarySpyAsync         thrpt      20  38720.199 ± 2365.716  ops/s
+MemcachedClientsBenchmark.measureBinarySpyMultiget      thrpt      20   3062.611 ±  588.345  ops/s
+MemcachedClientsBenchmark.measureBinaryX                thrpt      20  49070.413 ± 1937.203  ops/s
+MemcachedClientsBenchmark.measureBinaryXMultiget        thrpt      20   1997.819 ±   57.554  ops/s
+MemcachedClientsBenchmark.measureAsciiFolsomAsync      sample  707954      0.004 ±    0.001   s/op
+MemcachedClientsBenchmark.measureAsciiFolsomMultiget   sample   37819      0.068 ±    0.001   s/op
+MemcachedClientsBenchmark.measureAsciiSpyAsync         sample  882133      0.003 ±    0.001   s/op
+MemcachedClientsBenchmark.measureAsciiSpyMultiget      sample   40996      0.063 ±    0.001   s/op
+MemcachedClientsBenchmark.measureAsciiX                sample  953473      0.003 ±    0.001   s/op
+MemcachedClientsBenchmark.measureAsciiXMultiget        sample   39925      0.064 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinaryFolsomAsync     sample  595471      0.004 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinaryFolsomMultiget  sample   41096      0.062 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinarySpyAsync        sample  623201      0.004 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinarySpyMultiget     sample   60941      0.042 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinaryX               sample  876283      0.003 ±    0.001   s/op
+MemcachedClientsBenchmark.measureBinaryXMultiget       sample   38665      0.066 ±    0.001   s/op
 ```
